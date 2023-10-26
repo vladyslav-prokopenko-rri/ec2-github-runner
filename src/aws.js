@@ -39,8 +39,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,
-      MinCount: 1,
-      MaxCount: 1,
+      InstanceCount: 1,
       UserData: Buffer.from(userData.join('\n')).toString('base64'),
       SubnetId: config.input.subnetId,
       SecurityGroupIds: [config.input.securityGroupId],
@@ -53,7 +52,8 @@ async function startEc2Instance(label, githubRegistrationToken) {
     params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,
-      InstanceCount: 1,
+      MinCount: 1,
+      MaxCount: 1,
       UserData: Buffer.from(userData.join('\n')).toString('base64'),
       SubnetId: config.input.subnetId,
       SecurityGroupIds: [config.input.securityGroupId],
@@ -63,7 +63,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
   }
 
   try {
-    core.info(`Params are ${params}`);
+    core.info(JSON.stringify(params, null, 2));
     core.info(`Is it spot ${config.input.ec2Spot}`);
     if (config.input.ec2Spot) {
       core.info(`Is going to create Spot instance`);

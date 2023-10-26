@@ -19,7 +19,7 @@ function buildUserDataScript(githubToken=config.input.githubToken, githubRegistr
       '#!/bin/bash',
       'mkdir actions-runner && cd actions-runner',
       'case $(uname -m) in aarch64) ARCH="arm64" ;; amd64|x86_64) ARCH="x64" ;; esac && export RUNNER_ARCH=${ARCH}',
-      `curl -o actions-runner-linux-2.304.0.tar.gz -L -H 'Authorization: Bearer ${githubToken}' https://code.rbi.tech/_services/pipelines/_apis/distributedtask/packagedownload/agent/linux-${RUNNER_ARCH}/2.304.0`,
+      `curl -o actions-runner-linux-2.304.0.tar.gz -L -H 'Authorization: Bearer ${githubToken}' ` + 'https://code.rbi.tech/_services/pipelines/_apis/distributedtask/packagedownload/agent/linux-${RUNNER_ARCH}/2.304.0',
       'tar xzf ./actions-runner-linux-2.304.0.tar.gz',
       'export RUNNER_ALLOW_RUNASROOT=1',
       `./config.sh --url https://code.rbi.tech/raiffeisen/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label}`,

@@ -61,9 +61,13 @@ async function startEc2Instance(label, githubRegistrationToken) {
   }
 
   try {
+    core.info(`Params are ${params}`);
+    core.info(`Is it spot ${this.input.ec2Spot}`);
     if (this.input.ec2Spot === 'true') {
+      core.info(`Is going to create Spot instance`);
       const result = await ec2.RequestSpotInstancesCommand(params).promise();
     } else {
+      core.info(`Is going to create On-Demand instance`);
       const result = await ec2.runInstances(params).promise();
     }
     const ec2InstanceId = result.Instances[0].InstanceId;

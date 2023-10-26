@@ -33,7 +33,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   const userData = buildUserDataScript(githubRegistrationToken, label);
 
-  if (this.input.ec2Spot === 'true') {
+  if (config.input.ec2Spot === 'true') {
     const params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,
@@ -62,8 +62,8 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   try {
     core.info(`Params are ${params}`);
-    core.info(`Is it spot ${this.input.ec2Spot}`);
-    if (this.input.ec2Spot === 'true') {
+    core.info(`Is it spot ${config.input.ec2Spot}`);
+    if (config.input.ec2Spot === 'true') {
       core.info(`Is going to create Spot instance`);
       const result = await ec2.RequestSpotInstancesCommand(params).promise();
     } else {

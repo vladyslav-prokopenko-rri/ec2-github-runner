@@ -25,12 +25,12 @@ inputs:
       EC2 Instance Type.
       This input is required if you use the 'start' mode.
     required: false
-  ec2-spot:
-    description: >-
-      EC2 Spot.
-      This input is required if you use the 'start' mode.
-    required: false
-    default: "false"
+  # ec2-spot:
+  #   description: >-
+  #     EC2 Spot.
+  #     This input is required if you use the 'start' mode.
+  #   required: false
+  #   default: "false"
   subnet-id:
     description: >-
       VPC Subnet Id. The subnet should belong to the same VPC as the specified security group.

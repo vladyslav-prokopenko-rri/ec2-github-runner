@@ -33,7 +33,9 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   const userData = buildUserDataScript(githubRegistrationToken, label);
 
-  if (config.input.ec2Spot ) {
+  core.info(typeof config.input.ec2Spot);
+
+  if (config.input.ec2Spot) {
     params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,

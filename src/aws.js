@@ -34,7 +34,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
   const userData = buildUserDataScript(githubRegistrationToken, label);
 
   if (config.input.ec2Spot === 'true') {
-    const params = {
+    params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,
       InstanceCount: 1,
@@ -45,7 +45,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
       TagSpecifications: config.tagSpecifications,
     }
   } else {
-    const params = {
+    params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,
       MinCount: 1,
@@ -65,10 +65,10 @@ async function startEc2Instance(label, githubRegistrationToken) {
     core.info(`Is it spot ${config.input.ec2Spot}`);
     if (config.input.ec2Spot === 'true') {
       core.info(`Is going to create Spot instance`);
-      const result = await ec2.RequestSpotInstancesCommand(params).promise();
+      result = await ec2.RequestSpotInstancesCommand(params).promise();
     } else {
       core.info(`Is going to create On-Demand instance`);
-      const result = await ec2.runInstances(params).promise();
+      result = await ec2.runInstances(params).promise();
     }
     const ec2InstanceId = result.Instances[0].InstanceId;
     core.info(`AWS EC2 instance ${ec2InstanceId} is started`);

@@ -33,20 +33,39 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   const userData = buildUserDataScript(githubRegistrationToken, label);
 
-  const params = {
-    ImageId: config.input.ec2ImageId,
-    InstanceType: config.input.ec2InstanceType,
-    MinCount: 1,
-    MaxCount: 1,
-    UserData: Buffer.from(userData.join('\n')).toString('base64'),
-    SubnetId: config.input.subnetId,
-    SecurityGroupIds: [config.input.securityGroupId],
-    IamInstanceProfile: { Name: config.input.iamRoleName },
-    TagSpecifications: config.tagSpecifications,
-  };
+  if (this.input.ec2Spot === 'true') {
+    const params = {
+      ImageId: config.input.ec2ImageId,
+      InstanceType: config.input.ec2InstanceType,
+      InstanceCount: 1,
+      UserData: Buffer.from(userData.join('\n')).toString('base64'),
+      SubnetId: config.input.subnetId,
+      SecurityGroupIds: [config.input.securityGroupId],
+      IamInstanceProfile: { Name: config.input.iamRoleName },
+      TagSpecifications: config.tagSpecifications,
+    }
+  } else {
+    const params = {
+      ImageId: config.input.ec2ImageId,
+      InstanceType: config.input.ec2InstanceType,
+      MinCount: 1,
+      MaxCount: 1,
+      UserData: Buffer.from(userData.join('\n')).toString('base64'),
+      SubnetId: config.input.subnetId,
+      SecurityGroupIds: [config.input.securityGroupId],
+      IamInstanceProfile: { Name: config.input.iamRoleName },
+      TagSpecifications: config.tagSpecifications,
+      SpotPrice: 0.800,
+      Type: one-time,
+    };
+  }
 
   try {
-    const result = await ec2.runInstances(params).promise();
+    if (this.input.ec2Spot === 'true') {
+      const result = await ec2.RequestSpotInstancesCommand(params).promise();
+    } else {
+      const result = await ec2.runInstances(params).promise();
+    }
     const ec2InstanceId = result.Instances[0].InstanceId;
     core.info(`AWS EC2 instance ${ec2InstanceId} is started`);
     return ec2InstanceId;

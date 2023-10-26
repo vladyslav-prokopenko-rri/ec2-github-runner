@@ -33,20 +33,18 @@ async function startEc2Instance(label, githubRegistrationToken) {
 
   const userData = buildUserDataScript(githubRegistrationToken, label);
 
-  core.info(typeof config.input.ec2Spot);
-
   if (config.input.ec2Spot) {
     params = {
       ImageId: config.input.ec2ImageId,
       InstanceType: config.input.ec2InstanceType,
-      InstanceCount: 1,
+      MinCount: 1,
+      MaxCount: 1,
       UserData: Buffer.from(userData.join('\n')).toString('base64'),
       SubnetId: config.input.subnetId,
       SecurityGroupIds: [config.input.securityGroupId],
       IamInstanceProfile: { Name: config.input.iamRoleName },
       TagSpecifications: config.tagSpecifications,
-      SpotPrice: 0.800,
-      Type: 'one-time',
+      InstanceMarketOptions: { MarketType: 'spot', SpotOptions: { SpotInstanceType: 'one-time' } },
     };
   } else {
     params = {
@@ -63,15 +61,9 @@ async function startEc2Instance(label, githubRegistrationToken) {
   }
 
   try {
-    core.info(JSON.stringify(params, null, 2));
-    core.info(`Is it spot ${config.input.ec2Spot}`);
-    if (config.input.ec2Spot) {
-      core.info(`Is going to create Spot instance`);
-      result = await ec2.RequestSpotInstancesCommand(params).promise();
-    } else {
-      core.info(`Is going to create On-Demand instance`);
-      result = await ec2.runInstances(params).promise();
-    }
+    core.debug(JSON.stringify(params, null, 2));
+    core.debug(`Is it spot ${config.input.ec2Spot}`);
+    result = await ec2.runInstances(params).promise();
     const ec2InstanceId = result.Instances[0].InstanceId;
     core.info(`AWS EC2 instance ${ec2InstanceId} is started`);
     return ec2InstanceId;
